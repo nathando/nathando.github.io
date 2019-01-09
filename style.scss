@@ -19,7 +19,7 @@ html {
 
 body {
 	background: $white;
-  font: 18px/1.4 $ptsans;
+  font: 16px/1.4 $ptsans;
   color: $darkerGray;
 }
 
@@ -37,22 +37,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 30px;
+  font-size: 25px;
   a {
     color: inherit;
   }
 }
 
 h2 {
-  font-size: 24px;
-}
-
-h3 {
   font-size: 20px;
 }
 
-h4 {
+h3 {
   font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
 }
 
 p {
@@ -180,18 +180,19 @@ img {
 
 .site-name {
   margin: 0;
+  margin-bottom: 5px;
   color: $darkGray;
   cursor: pointer;
   font-family: $encodesans;
   font-weight: 400;
-  font-size: 28px;
+  font-size: 25px;
   letter-spacing: 1px;
 }
 
 .site-description {
   margin: -5px 0 0 0;
   color: $gray;
-  font-size: 20px;
+  font-size: 18px;
 
   @include mobile {
     margin: 3px 0;
@@ -202,13 +203,13 @@ nav {
   float: right;
   margin-top: 23px; // @TODO: Vertically middle align
   font-family: $encodesans;
-  font-size: 20px;
+  font-size: 18px;
 
   @include mobile {
     float: none;
     margin-top: 9px;
     display: block;
-    font-size: 16px;
+    font-size: 14px;
   }
 
   a {
@@ -234,6 +235,7 @@ nav {
 .posts {
   .post-img {
     padding: 20px;
+    margin: auto 20px;
     img {
       margin-left: auto;
       margin-right: auto;
@@ -265,7 +267,7 @@ nav {
     font-style: italic;
   }
   .post-title {
-    font-size: 45px;
+    font-size: 35px;
     font-weight: normal;
     margin: 0;
   }
@@ -282,7 +284,6 @@ nav {
   }
 
   .read-more {
-    text-transform: uppercase;
     font-size: 15px;
     color: lighten(red, 15%)
   }
@@ -293,6 +294,11 @@ nav {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   background-color: $lightGray;
+}
+
+.tag {
+  color: #555;
+  font-weight: bold;
 }
 
 footer {

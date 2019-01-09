@@ -2,6 +2,7 @@
 layout: post
 title: Auto backup ERPNext DB and public files to AWS S3
 image: /images/erpnext-logo-copy.png
+tags: ["erpnext", "aws"]
 ---
 
 #### ERPNext

@@ -2,6 +2,7 @@
 layout: post
 title: Docker Compose to host Django APIs
 image: /images/django-docker.png
+tags: ["django"]
 ---
 
 Docker compose helps to simplify a lot of steps in hosting the APIs especially with auto reload. Details on how I've set up the environment will be posted at another time.
