@@ -2,6 +2,14 @@
 layout: default
 ---
 
+<!-- brief intro -->
+<div>
+  <img class="site-icon" src="{{site.icon}}"/>
+</div>
+<div class="site-intro">
+  {{ site.intro }}
+</div>
+<!-- posts -->
 <div class="posts">
   {% for post in site.posts %}
     <div class="grid-x grid-padding-y">
