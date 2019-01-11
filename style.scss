@@ -198,6 +198,19 @@ img {
     margin: 3px 0;
   }
 }
+.site-icon {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.site-intro {
+  text-align: center;
+  font-size: 22px;
+  margin: 10px 70px;
+  @include mobile {
+    margin: 5px 15px;
+  }
+}
 
 nav {
   float: right;

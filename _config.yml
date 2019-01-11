@@ -6,7 +6,11 @@
 name: Nathan Do
 
 # Short bio or description (displayed in the header)
-description: life_is_a_good.py
+description: life_of.py
+
+intro: Mini blogs about my technical tips, musics, books or just orinary life's ramblings
+
+icon: images/icon-ninja.png
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
 avatar: https://avatars3.githubusercontent.com/u/1678810?s=100
