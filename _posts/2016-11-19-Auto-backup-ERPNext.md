@@ -4,8 +4,6 @@ title: Auto backup ERPNext DB and public files to AWS S3
 image: /images/erpnext-logo-copy.png
 tags: ["erpnext", "aws"]
 ---
-
-#### ERPNext
 [ERPNext](https://erpnext.com/) is a fast growing open source ERP platform, which's pretty easy to use or setup. With a clear modularized architect, the underlaying app development platform of ERPNext (called Frappe) allows developer to quickly add new features to ERPNext, or even stand-alone applications. In general, it's a pretty good platform.
 
 Have been developed with ERPNext for over a year, I have deployed several projects with it. One thing I've noted is because the development has gone too fast, their documentation sometimes cannot keep up with it. So I will try to write share of my experiences here to fill the gap. 
@@ -48,7 +46,7 @@ From [S3 console](https://console.aws.amazon.com/s3/home) home, create a new buc
 ##### Step 5: Add script to backup and upload to S3
 The short script below will call the backup command from **ERPNext's** `bench` and extract those file names and upload to a folder based on the timestamp of the execution. Save this as `/home/frappe/frappe-bench/backup.sh`. Remember to replace `yourbucket` with the actual name of your bucket created above.
 
-```
+{% highlight perl %}
 #!/bin/bash
 
 # Get both DB and files backups
@@ -62,7 +60,8 @@ echo "New S3 backup folder: $folder. DB file:  $db. Zip file: $files"
 
 # Upload files
 /usr/local/bin/aws s3 mv $db s3://yourbucket/$folder/ && /usr/local/bin/aws s3 mv $files s3://yourbucket/$folder/
-```
+{% endhighlight %}
+
 To test the script, run `bash backup.sh`. If it succeeds, you should see something similar to this: 
 
 {% highlight perl %}
