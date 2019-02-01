@@ -2,7 +2,7 @@
 layout: post
 title: Auto backup ERPNext DB and public files to AWS S3
 image: /images/erpnext-logo-copy.png
-tags: ["erpnext", "aws"]
+tags: ["erpnext", "aws", "tech"]
 ---
 [ERPNext](https://erpnext.com/) is a fast growing open source ERP platform, which's pretty easy to use or setup. With a clear modularized architect, the underlaying app development platform of ERPNext (called Frappe) allows developer to quickly add new features to ERPNext, or even stand-alone applications. In general, it's a pretty good platform.
 

@@ -3,18 +3,25 @@ layout: default
 ---
 <div>
   {% capture tag %}{{ page.title | slugify }}{% endcapture %}
-  <h4>#{{page.title| slugify}}
-    <a href="/" class="button clear secondary float-right"><i class="icon-action-undo"></i></a>
+  <h4 class="tag-title">#{{page.title| slugify}}
+    <a href="/" class="button clear secondary float-left"><i class="icon-action-undo"></i></a>
   </h4>
-  <div class="post-list">
+  <div class="grid-x posts">
     {% for post in site.posts %}
       {% if post.tags contains tag %}
-      <h2><a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h2>
-      {{ post.excerpt }}
-      <div class="clearfix">
-        <span class="post-meta float-right">{{ post.date | date: "%b %-d, %Y" }}</span>
-        <a class="read-more float-left" href="{{ post.url | prepend: site.baseurl }}" >Read More</a>
-      </div>
+        <div class="large-3 medium-3 cell">
+          <div class="post-img">
+            <img src="{{ post.image }}" alt="">
+          </div>
+        </div>
+        <div class="large-9 medium-9 cell">
+            <h2><a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h2>
+            {{ post.excerpt }}
+            <div class="clearfix">
+              <span class="post-meta float-right">{{ post.date | date: "%b %-d, %Y" }}</span>
+              <a class="read-more float-left" href="{{ post.url | prepend: site.baseurl }}" >Read More</a>
+            </div>
+        </div>
       {% endif %}
     {% endfor %}
   </div>

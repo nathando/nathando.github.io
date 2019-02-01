@@ -2,7 +2,7 @@
 layout: post
 title: "Development with ERPNext - Part 1: Setup using Vagrant box"
 image: /images/erpnext-logo-copy.png
-tags: ["erpnext", "vagrant"]
+tags: ["erpnext", "vagrant", "tech"]
 ---
 
 One thing that was quite impressive when I first started working with ERPNext was the underlying **Frappe** Framework. It is highly extensible multi-tenant platform. In a way, Frappe acts as a host for all other apps to run on top, including ERPNext itself.

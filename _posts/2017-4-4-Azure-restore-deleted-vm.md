@@ -2,7 +2,7 @@
 layout: post
 title: "Azure: Restore a deleted VM"
 image: /images/azure/azure-microsoft.png
-tags: ["azure", "server"]
+tags: ["azure", "server", "tech"]
 ---
 
 Have been using AWS and DO for the past few years, I have some struggles when moving to Azure. For one thing, even with the new portal, Azure's UI is still cluttering and quite hard to navigate around, let alone using any short cut.
