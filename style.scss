@@ -27,11 +27,11 @@ body {
 h1, h2, h3, h4, h5, h6 {
   color: $black;
   margin: 20px 0 5px 0;
-  line-height: 1.7;
+  line-height: 1.5;
   padding: 0;
 
   @include mobile {
-    line-height: 1.4;
+    line-height: 1.3;
   }
 }
 
@@ -56,7 +56,7 @@ h4 {
 
 p {
   margin: 5px 0 15px 0;
-  line-height: 1.6;
+  line-height: 1.4;
 }
 
 a {
@@ -164,6 +164,7 @@ img {
 
   img {
     border-radius: 5px;
+    border: 1px solid white;
   }
 }
 
@@ -180,7 +181,6 @@ img {
 .site-name {
   margin: 0;
   margin-bottom: 5px;
-  color: $darkGray;
   cursor: pointer;
   font-family: $encodesans;
   font-weight: 400;
@@ -188,9 +188,18 @@ img {
   letter-spacing: 1px;
 }
 
+.site-name, .main-nav {
+  a {
+    color: $lightGray;
+    &:hover {
+      color: white;
+    }
+  }
+}
+
 .site-description {
   margin: -5px 0 0 0;
-  color: $gray;
+  color: lighten($gray, 40%);
   font-size: 18px;
 
   @include mobile {
@@ -204,7 +213,7 @@ img {
 }
 .site-intro {
   text-align: center;
-  font-size: 22px;
+  font-size: 20px;
   margin: 10px 70px;
   @include mobile {
     margin: 5px 15px;
@@ -214,7 +223,6 @@ img {
 nav {
   float: right;
   margin-top: 23px; // @TODO: Vertically middle align
-  font-family: $encodesans;
   font-size: 18px;
 
   @include mobile {
@@ -301,6 +309,25 @@ nav {
   }
 }
 
+.pagination-wrapper {
+  float: none;
+  text-align: center;
+  display: block;
+  .pagination {
+    padding: 0px;
+    a, .current {
+      border-radius: 3px;
+    }
+    .next, .previous {
+      margin: 0px;
+      text-align: center;
+      &::after, &::before {
+        margin: 0;
+      }
+    }
+  }
+}
+
 .wrapper-footer {
   margin-top: 50px;
   border-top: 1px solid #ddd;
@@ -311,6 +338,12 @@ nav {
 .tag {
   color: #555;
   font-weight: bold;
+}
+
+.header {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 5px;
+  background: #333;
 }
 
 footer {

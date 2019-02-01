@@ -5,7 +5,7 @@ image: /images/azure/azure-microsoft.png
 tags: ["azure", "server"]
 ---
 
-Have been using AWS and DO for the past few years, I have some struggles when moving to Azure. For one thing, even with the new portal, Azure's UI is still clustering and quite hard to navigate around, let alone using any short cut.
+Have been using AWS and DO for the past few years, I have some struggles when moving to Azure. For one thing, even with the new portal, Azure's UI is still cluttering and quite hard to navigate around, let alone using any short cut.
 
 And so naturally I've made mistake, deleted a wrong VM and it disappeared in a few seconds. Only then I've realized how stupid that was! On DO, it was supremely easy to just restore a VM or even AWS given that you have the backup set up or made snapshot prior to that. Azure ? I've got to search all over the place. Most results show how to do it with PowerShell, but I am on Mac.
 

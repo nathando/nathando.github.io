@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: home
 ---
 
 <!-- brief intro -->
@@ -11,8 +11,8 @@ layout: default
 </div>
 <!-- posts -->
 <div class="posts">
-  {% for post in site.posts %}
-    <div class="grid-x grid-padding-y">
+  {% for post in paginator.posts %}
+    <div class="grid-x">
       <div class="large-3 medium-3 cell">
         <div class="post-img">
           <img src="{{ post.image }}" alt="">
@@ -22,7 +22,7 @@ layout: default
         <article class="post">
           <h2><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h2>
           <div class="entry">
-            {{ post.excerpt }}
+            {{ post.excerpt| strip_html | strip_newlines | truncate: 200 }}
           </div>
           <div class="clearfix">
             <a class="read-more float-left" href="{{ site.baseurl }}{{ post.url }}" >Read More</a>
@@ -41,3 +41,27 @@ layout: default
     {% endif %}
   {% endfor %}
 </div>
+
+<!-- Pagination links -->
+
+{% if paginator.total_pages>1 %}
+  <nav class="pagination-wrapper" aria-label="Pagination">
+    <ul class="pagination">
+
+      {% if paginator.previous_page %}
+      <li class="pagination-previous">
+        <a href="{{ paginator.previous_page_path }}" class="previous"></a>
+      </li>
+      {% endif %}
+      <li class="current"><span>{{paginator.page}}</span></li>
+      {% if paginator.total_pages>3 %}
+      <li class="ellipsis" aria-hidden="true"></li>
+      {% endif %}
+      {% if paginator.next_page %}
+      <li class="pagination-next">
+        <a href="{{ paginator.next_page_path }}" class="next"></a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
