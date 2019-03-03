@@ -51,7 +51,7 @@ For example, in the case of following video:
 - The `title` will be: `(Charlie Puth) Attention`  
 - The `artist` will be:  `Josephine Alexandra | Fingerstyle Guitar Cover`  
 
-I used short forms of `artist` (`a`), `title` (`t`), `album` (`at`) as reminder how the pattern looks like
+I used short forms of `artist` (`a`), `title` (`t`), `album` (`al`) as reminder how the pattern looks like
 
 **For `ytdl-atal` (or `artist`, `title`, `album`), the pattern is:** `[title] [separator] [artist] [separator] [album]`, in which `[separator]` is same as above with extra `(` in case of last separator.  
 
