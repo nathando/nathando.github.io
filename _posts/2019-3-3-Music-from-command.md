@@ -60,13 +60,21 @@ The first installation, I've accidentally downloaded and compiled the build on `
 
 **2. Usage**  
 `cmus` is a very useful player when you mostly work on Terminal. Its UI has 7 views (that you can switch around using number key 1-7 once cmus open):  
-![](/images/2019Mar/cmus-views.png)
+1. **Library View**: Displays all tracks in the library  
+2. **Sorted Library View**: Displays same content as (1) but with simpler UI and automatically sorted  
+3. **Playlist View**: Displays editable playlist with optional sorting (we can add songs to playlist from Library)  
+4. **Play Queue View**: Displays queue of tracks which are played next  
+5. **Browser View**: Browse file from your local system and add them to Library, playlist or queue
+6. **Filter View**: Lists user define filters
+7. **Settings View**: Lists keybindings, unbound commands and options
+
 
 If you are used to use terminal, it won't be that hard to use `cmus`. But to make it easier to remember the list of commands, I recommend this [cheatsheet](https://www.cheatography.com/stephenjjohnson/cheat-sheets/cmus/pdf/)  
 As of the 2 video above, here is what it will look like after we've added them in playlist:  
 ![](/images/2019Mar/cmus-playlist.png)  
 
-One thing I definitely loved about `cmus` is that the navigation keys are `j`, `k` for up and down which is super familiar if you used `vim`. So again, everything is seamless.  
+One thing I definitely loved about `cmus` is that the navigation keys are `j`, `k` for up and down which is super familiar if you used `vim`. So again, everything is seamless. 
+There are much more functionalities of cmus to explore and I am still in the learning process.  
 
 Hope you will find this useful if you are also late to the game :)  
 
