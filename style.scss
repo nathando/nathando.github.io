@@ -253,6 +253,16 @@ nav {
   border-radius: 5px;
 }
 .posts {
+  .post-item {
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 10px 15px;
+    transition: box-shadow 0.2s;
+    cursor: pointer;
+    &:hover {
+      box-shadow: 0 1px 3px #aaa;
+    }
+  }
   .post-img {
     padding: 20px;
     margin: auto 20px;
@@ -278,6 +288,12 @@ nav {
 
 .post {
   img {width: 100%;}
+  img.img-auto{
+    display: block;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
   blockquote {
     margin: 1.8em .8em;
     border-left: 2px solid $gray;

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: My SG cities
-image: /images/2019Jul/sg.jpg
+image: /images/2019Jul/sg-duo.png
 tags: ["life", "work"]
 ---
 
