@@ -18,8 +18,8 @@ html {
 }
 
 body {
-	background: $white;
-  font: 18px/1.4 $anaheim;
+  background: $white;
+  font: 16px/1.5 $quicksand;
   color: $darkerGray;
   -webkit-font-smoothing: antialiased;
 }
@@ -56,7 +56,7 @@ h4 {
 
 p {
   margin: 5px 0 15px 0;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 a {
@@ -299,11 +299,16 @@ nav {
     border-left: 2px solid $gray;
     padding: 0.1em 1em;
     color: $gray;
-    font-size: 22px;
+    font-size: 18px;
     font-style: italic;
+    .author {
+      margin: 0;
+      font-weight: bold;
+      text-align: right;
+    }
   }
   .post-title {
-    font-size: 35px;
+    font-size: 32px;
     font-weight: normal;
     margin: 0;
   }
