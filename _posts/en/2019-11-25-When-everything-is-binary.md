@@ -1,5 +1,6 @@
 ---
 layout: post
+lang: en
 title: Binary
 image: /images/2019Nov/binary-logo.jpg
 tags: ["life"]

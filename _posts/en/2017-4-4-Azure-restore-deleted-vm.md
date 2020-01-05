@@ -1,5 +1,6 @@
 ---
 layout: post
+lang: en
 title: "Azure: Restore a deleted VM"
 image: /images/azure/azure-microsoft.png
 tags: ["azure", "server", "tech"]

@@ -1,5 +1,6 @@
 ---
 layout: post
+lang: en
 title: A new decade
 image: /images/2020Jan/2020.jpg
 tags: ["life"]

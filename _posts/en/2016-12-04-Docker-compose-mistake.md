@@ -1,5 +1,6 @@
 ---
 layout: post
+lang: en
 title: Docker Compose to host Django APIs
 image: /images/django-docker.png
 tags: ["django", "tech"]

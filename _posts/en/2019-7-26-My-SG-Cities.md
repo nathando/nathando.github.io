@@ -1,5 +1,6 @@
 ---
 layout: post
+lang: en
 title: My SG cities
 image: /images/2019Jul/sg-duo.png
 tags: ["life", "work"]

@@ -1,5 +1,6 @@
 ---
 layout: post
+lang: en
 title: Music from command line
 image: /images/2019Mar/post-music.jpg
 tags: ["life", "music"]

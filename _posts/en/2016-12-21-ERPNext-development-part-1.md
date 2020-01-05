@@ -1,5 +1,6 @@
 ---
 layout: post
+lang: en
 title: "Development with ERPNext - Part 1: Setup using Vagrant box"
 image: /images/erpnext-logo-copy.png
 tags: ["erpnext", "vagrant", "tech"]

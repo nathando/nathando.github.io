@@ -1,5 +1,6 @@
 ---
 layout: post
+lang: en
 title: Docker compose to AWS ECS Part 1
 image: /images/2019Nov/compose-ecs.png
 tags: ["tech", "work"]

@@ -381,6 +381,47 @@ footer {
   text-align: center;
 }
 
+//
+//// language
+//.LangNav {
+//  margin: 10px;
+//
+//  #btn-lang {
+//    border-radius: 100px;
+//    box-shadow: 0 0 2px #ccc;
+//    width: 32px;
+//    height: 32px !important;
+//    box-sizing: border-box;
+//    display: table-cell;
+//    text-align: center;
+//    padding: 5px;
+//
+//    &:hover {
+//      box-shadow: 0 0 4px #aaa;
+//    }
+//  }
+//
+//  .flag-img {
+//    width: 25px;
+//    height: 25px;
+//  }
+//
+//  .flag-link {
+//    display: block;
+//    width: 100%;
+//    padding: 5px 10px;
+//    text-decoration: none;
+//
+//    &:hover {
+//      background: #eee;
+//    }
+//
+//    .flag-img {
+//      margin-right: 5px;
+//    }
+//  }
+//}
+
 // Settled on moving the import of syntax highlighting to the bottom of the CSS
 // ... Otherwise it really bloats up the top of the CSS file and makes it difficult to find the start
 @import "highlights";
