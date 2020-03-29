@@ -223,7 +223,7 @@ img {
 nav {
   float: right;
   margin-top: 23px; // @TODO: Vertically middle align
-  font-size: 18px;
+  font-size: 16px;
 
   @include mobile {
     float: none;
@@ -244,6 +244,49 @@ nav {
       color: $blue;
     }
   }
+}
+
+#btn-lang .flag-img {
+  border: 3px solid white;
+  background: white;
+  border-radius: 50px;
+  vertical-align: middle;
+  width: 25px;
+  height: 25px;
+}
+#lang-switcher {
+  width: 150px;
+  border: none;
+  border-radius: 5px;
+  list-style-type: none;
+  padding: 0;
+  box-shadow: 0 0 8px #999;
+  overflow: hidden;
+  .flag-img {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+  }
+  li {
+    border-top: 1px solid #eee;
+    &:first-child {
+      border: none;
+    }
+    a {
+      font-size: 14px;
+      color: #333;
+      margin: 0;
+      padding: 5px 15px;
+      display: block;
+      text-align: left;
+      &:hover {
+        background: #f3f3f3;
+      }
+    }
+  }
+
+
+
 }
 
 //

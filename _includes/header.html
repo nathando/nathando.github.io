@@ -12,20 +12,30 @@
         <nav class="main-nav">
           <a href="{{ site.baseurl }}/tag/tech">Tech</a>
           <a href="{{ site.baseurl }}/tag/life">Life</a>
+          <!-- Language switcher -->
+          {% for lang in site.data.languages %}
+            {% if lang[0] == page.lang %}
+            <a id="btn-lang" data-toggle="lang-switcher" href="#" aria-expanded="true">
+              <img class="flag-img" src="{{lang[1].icon}}">
+            </a>
+            {% endif %}
+          {% endfor %}
+          <ul id="lang-switcher" class="dropdown-pane" data-dropdown
+              data-position="bottom" data-alignment="right" data-v-offset="10" >
+            {% for lang in site.data.languages %}
+              {% assign language = lang[1] %}
+              {% assign code = lang[0] == 'en' ? '': lang[0] %}
+              <li>
+                <a class="flag-link" href="{% if lang[0]=='en' %}/{% else %}/{{ lang[0] }}{% endif %}">
+                    <img class="flag-img" src="{{language.icon}}">
+                    <span>{{language.label}}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
         </nav>
 
-<!--        <ul class="languages">-->
-<!--          {% for lang in site.data.languages %}-->
-<!--            {% assign language = lang[1] %}-->
-<!--            {% assign code = lang[0] == 'en' ? '': lang[0] %}-->
-<!--            <li>-->
-<!--              <a class="flag-link" href="{% if lang[0]=='en' %}/{% else %}/{{ lang[0] }}{% endif %}">-->
-<!--                  <img class="flag-img" src="{{language.icon}}">-->
-<!--                  <span>{{language.label}}</span>-->
-<!--              </a>-->
-<!--            </li>-->
-<!--          {% endfor %}-->
-<!--        </ul>-->
+
       </header>
     </div>
   </div>
