@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Docker Compose to host Django APIs – Nathan Do – life_of.py</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="Docker compose helps to simplify a lot of steps in hosting the APIs especially with auto reload. Details on how I’ve set up the environment will be posted at another time.
+
+" />
+    <meta property="og:description" content="Docker compose helps to simplify a lot of steps in hosting the APIs especially with auto reload. Details on how I’ve set up the environment will be posted at another time.
+
+" />
+    
+    <meta name="author" content="Nathan Do" />
+
+    
+    <meta property="og:title" content="Docker Compose to host Django APIs" />
+    <meta property="twitter:title" content="Docker Compose to host Django APIs" />
+    
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-87712266-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-87712266-1');
+</script>
+
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans|Encode+Sans|Anaheim" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/plugins/foundation/foundation.min.css" />
+    <link rel="stylesheet" type="text/css" href="/plugins/simple-line-icons/css/simple-line-icons.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Nathan Do - life_of.py" href="/feed.xml" />
+    <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="header">
+  <div class="grid-container">
+    <div class="grid-x grid-padding-x grid-padding-y">
+      <header class="large-12 cell">
+        <a href="/" class="site-avatar"><img src="https://avatars3.githubusercontent.com/u/1678810?s=100" /></a>
+
+        <div class="site-info">
+          <h1 class="site-name"><a href="/">Nathan Do</a></h1>
+          <p class="site-description">life_of.py</p>
+        </div>
+
+        <nav class="main-nav">
+          <a href="/tag/tech">Tech</a>
+          <a href="/tag/life">Life</a>
+          <!-- Language switcher -->
+          
+            
+            <a id="btn-lang" data-toggle="lang-switcher" href="#" aria-expanded="true">
+              <img class="flag-img" src="/images/flags/uk.png">
+            </a>
+            
+          
+            
+          
+          <ul id="lang-switcher" class="dropdown-pane" data-dropdown
+              data-position="bottom" data-alignment="right" data-v-offset="10" >
+            
+              
+              
+              <li>
+                <a class="flag-link" href="/">
+                    <img class="flag-img" src="/images/flags/uk.png">
+                    <span>English</span>
+                </a>
+              </li>
+            
+              
+              
+              <li>
+                <a class="flag-link" href="/vn">
+                    <img class="flag-img" src="/images/flags/vn.png">
+                    <span>Vietnamese</span>
+                </a>
+              </li>
+            
+          </ul>
+        </nav>
+
+
+      </header>
+    </div>
+  </div>
+</div>
+
+    <div id="main" role="main" class="grid-container">
+      <article class="post">
+  <h1 class="post-title">Docker Compose to host Django APIs</h1>
+  <hr class="post-title-sep">
+
+  <div class="entry">
+    <p>Docker compose helps to simplify a lot of steps in hosting the APIs especially with auto reload. Details on how I’ve set up the environment will be posted at another time.</p>
+
+<h5 id="the-problem">The Problem</h5>
+<p>But being it the first time I’ve deployed anything with Docker Compose, I’ve made a silly mistake, which drastically slow down the performance. At one point in time the API is <strong>60x slower than normal</strong>, and I’ve checked the code, nothing seems abnormal. You can imagine what level of frustration I have with that.</p>
+
+<p>This post is simply a reminder to myself not to repeat the simple mistake again.</p>
+
+<p><strong>So here it is:</strong> every time we do any updates that are related to Database in Django we will need to at least apply a migrations. And how i usually do that (<strong>api</strong> is the service that i need to run command on):</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">docker</span><span class="o">-</span><span class="n">compose</span> <span class="o">-</span><span class="n">f</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="p">.</span><span class="nf">yaml</span> <span class="o">-</span><span class="n">f</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="p">.</span><span class="nf">production</span><span class="p">.</span><span class="nf">yaml</span> <span class="n">run</span> <span class="n">api</span> <span class="p">.</span><span class="nf">/</span><span class="n">manage</span> <span class="n">migrate</span></code></pre></figure>
+
+<p>What it does is it will create another container and run the command execution there to migrate the django. However, I didn’t know the container will stay there if you don’t do any thing extra.</p>
+
+<p>So it turns out, with only all these supposedly one time commands, I’ve ended up to have tens of ghost containers… And the server does not take it so well. The solution is simply to stop and remove all the unnecessary containers.</p>
+
+<p>So simple note, next time any one who do 1 time command on docker-compose, please do add the <code>--rm</code> flag like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">docker</span><span class="o">-</span><span class="n">compose</span> <span class="o">-</span><span class="n">f</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="p">.</span><span class="nf">yaml</span> <span class="o">-</span><span class="n">f</span> <span class="n">docker</span><span class="o">-</span><span class="n">compose</span><span class="p">.</span><span class="nf">production</span><span class="p">.</span><span class="nf">yaml</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> <span class="n">api</span> <span class="p">.</span><span class="nf">/</span><span class="n">manage</span> <span class="n">migrate</span></code></pre></figure>
+
+<p>At least, it won’t cost you hours or days to figure out why suddenly your APIs are supremely slow.</p>
+
+<h5 id="enhancement">Enhancement</h5>
+<p>Now the above commands does work now. However, it’s quite tedious to keep repeating <code>docker-compose -f ...</code> every time you want to run a command.</p>
+
+<p>Luckily we have <code>alias</code> to the rescue. With this, we can simply assign alias for the repeating command.</p>
+
+<p>So first open your <code>.bashrc</code> for editing: <code>nano ~/.bashrc</code></p>
+
+<p>Add these lines at the end of the file (and remember to change the paths to the correct paths you have, as well as the service name <strong>api</strong>)</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># Add alias for docker compose command</span>
+<span class="k">alias</span> <span class="n">docker</span><span class="o">-</span><span class="n">prod</span><span class="o">=</span><span class="s2">"docker-compose -f /path/to/docker-compose.yml -f /path/to/docker-compose.production.yml"</span>
+<span class="k">alias</span> <span class="n">docker</span><span class="o">-</span><span class="n">run</span><span class="o">-</span><span class="n">api</span><span class="o">=</span><span class="s2">"docker-prod run --rm api"</span></code></pre></figure>
+
+<p>Save <code>.bashrc</code> and apply its effect by: <code>source ~/.bashrc</code></p>
+
+<p>With this set up, you can now use much shorter/prettier commands such as:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># Restart services</span>
+<span class="n">docker</span><span class="o">-</span><span class="n">prod</span> <span class="n">restart</span>
+<span class="c1"># DB migrate</span>
+<span class="n">docker</span><span class="o">-</span><span class="n">run</span><span class="o">-</span><span class="n">api</span> <span class="p">.</span><span class="nf">/</span><span class="n">manage</span><span class="p">.</span><span class="nf">py</span> <span class="n">migrate</span></code></pre></figure>
+
+<p>These are just tips right now, will try to come up with a full tutorial on setting up the environment next time. Have fun!`</p>
+
+  </div>
+
+  <div class="date">
+    Written on December  4, 2016
+  </div>
+
+  
+<div class="comments">
+	<div id="disqus_thread"></div>
+	<script type="text/javascript">
+
+	    var disqus_shortname = 'nathandlb-com';
+
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+</article>
+
+    </div>
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+
+
+
+<a href="https://github.com/nathando"><i class="svg-icon github"></i></a>
+
+<a href="https://www.linkedin.com/in/nathando"><i class="svg-icon linkedin"></i></a>
+
+
+<a href="https://www.twitter.com/nathandlb"><i class="svg-icon twitter"></i></a>
+<a href="http://stackoverflow.com/users/1149484/nathan-do"><i class="svg-icon stackoverflow"></i></a>
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+	<!-- Google Analytics -->
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-104939362-1', 'auto');
+		ga('send', 'pageview', {
+		  'page': '/2016/12/04/Docker-compose-mistake.html',
+		  'title': 'Docker Compose to host Django APIs'
+		});
+	</script>
+	<!-- End Google Analytics -->
+
+
+    <script type="text/javascript" src="/plugins/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/plugins/foundation/foundation.min.js"></script>
+    <script type="text/javascript" src="/js/main.js"></script>
+  </body>
+</html>
