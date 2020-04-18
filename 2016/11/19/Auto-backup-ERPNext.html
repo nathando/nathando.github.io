@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Auto backup ERPNext DB and public files to AWS S3 – Nathan Do – life_of.py</title>
+
+        <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="ERPNext is a fast growing open source ERP platform, which’s pretty easy to use or setup. With a clear modularized architect, the underlaying app development platform of ERPNext (called Frappe) allows developer to quickly add new features to ERPNext, or even stand-alone applications. In general, it’s a pretty good platform.
+
+" />
+    <meta property="og:description" content="ERPNext is a fast growing open source ERP platform, which’s pretty easy to use or setup. With a clear modularized architect, the underlaying app development platform of ERPNext (called Frappe) allows developer to quickly add new features to ERPNext, or even stand-alone applications. In general, it’s a pretty good platform.
+
+" />
+    
+    <meta name="author" content="Nathan Do" />
+
+    
+    <meta property="og:title" content="Auto backup ERPNext DB and public files to AWS S3" />
+    <meta property="twitter:title" content="Auto backup ERPNext DB and public files to AWS S3" />
+    
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-87712266-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-87712266-1');
+</script>
+
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans|Encode+Sans|Anaheim" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/plugins/foundation/foundation.min.css" />
+    <link rel="stylesheet" type="text/css" href="/plugins/simple-line-icons/css/simple-line-icons.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <link rel="alternate" type="application/rss+xml" title="Nathan Do - life_of.py" href="/feed.xml" />
+    <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+  </head>
+
+  <body>
+    <div class="header">
+  <div class="grid-container">
+    <div class="grid-x grid-padding-x grid-padding-y">
+      <header class="large-12 cell">
+        <a href="/" class="site-avatar"><img src="https://avatars3.githubusercontent.com/u/1678810?s=100" /></a>
+
+        <div class="site-info">
+          <h1 class="site-name"><a href="/">Nathan Do</a></h1>
+          <p class="site-description">life_of.py</p>
+        </div>
+
+        <nav class="main-nav">
+          <a href="/tag/tech">Tech</a>
+          <a href="/tag/life">Life</a>
+          <!-- Language switcher -->
+          
+            
+          
+            
+          
+          <ul id="lang-switcher" class="dropdown-pane" data-dropdown
+              data-position="bottom" data-alignment="right" data-v-offset="10" >
+            
+              
+              
+              <li>
+                <a class="flag-link" href="/">
+                    <img class="flag-img" src="/images/flags/uk.png">
+                    <span>English</span>
+                </a>
+              </li>
+            
+              
+              
+              <li>
+                <a class="flag-link" href="/vn">
+                    <img class="flag-img" src="/images/flags/vn.png">
+                    <span>Vietnamese</span>
+                </a>
+              </li>
+            
+          </ul>
+        </nav>
+
+
+      </header>
+    </div>
+  </div>
+</div>
+
+    <div id="main" role="main" class="grid-container">
+      <article class="post">
+  <h1 class="post-title">Auto backup ERPNext DB and public files to AWS S3</h1>
+  <hr class="post-title-sep">
+
+  <div class="entry">
+    <p><a href="https://erpnext.com/">ERPNext</a> is a fast growing open source ERP platform, which’s pretty easy to use or setup. With a clear modularized architect, the underlaying app development platform of ERPNext (called Frappe) allows developer to quickly add new features to ERPNext, or even stand-alone applications. In general, it’s a pretty good platform.</p>
+
+<p>Have been developed with ERPNext for over a year, I have deployed several projects with it. One thing I’ve noted is because the development has gone too fast, their documentation sometimes cannot keep up with it. So I will try to write share of my experiences here to fill the gap.</p>
+
+<h4 id="back-up-erpnext-to-aws-s3">Back up ERPNext to AWS S3</h4>
+<p>ERPnext from version 5.x.x (current version is 7.2) already have very simple command to handle backup. It’s just that everything is still stored on the same server. So if some thing happens to it, there is no way to access the backups anyway. Hence, it’s safer to save the DB and files somewhere else for extra  redundancy.</p>
+
+<h5 id="step-1-download-and-install-aws">Step 1: Download and install AWS</h5>
+<p>Assuming that you have already set up a AWS account, this step is simple just following AWS’s instruction <a href="http://docs.aws.amazon.com/cli/latest/userguide/installing.html#install-bundle-other-os">here</a>. TLDR; on Ubuntu, you can use these commands (Python 2.6.5+ or Python 3 version 3.3+ required):</p>
+
+<figure class="highlight"><pre><code class="language-perl" data-lang="perl"><span class="nv">curl</span> <span class="s">"https://s3.amazonaws.com/aws-cli/awscli-bundle.zip"</span> <span class="o">-</span><span class="nv">o</span> <span class="s">"awscli-bundle.zip"</span>
+<span class="nv">unzip</span> <span class="nv">awscli</span><span class="o">-</span><span class="nv">bundle</span><span class="o">.</span><span class="nv">zip</span>
+<span class="nv">sudo</span> <span class="o">.</span><span class="sr">/awscli-bundle/ins</span><span class="nv">tall</span> <span class="o">-</span><span class="nv">i</span> <span class="sr">/usr/local/aws -b /us</span><span class="nv">r</span><span class="sr">/local/</span><span class="nv">bin</span><span class="o">/</span><span class="nv">aws</span></code></pre></figure>
+
+<h5 id="step-2-create-aws-iam-and-assign-permissions">Step 2: Create AWS IAM and Assign permissions</h5>
+<p>Assuming you have had an AWS account, go to the <a href="https://console.aws.amazon.com/iam/home">IAM Management Console</a> and create a new IAM user, specifically for backing up. The process is quite straight forward, so just a small reminder to:</p>
+
+<ol>
+  <li>
+    <p>On step 2, add S3 Full Access permission so that the user can access S3  <img src="/images/IAM2.png" alt="" /></p>
+  </li>
+  <li>
+    <p>On last step, remember to copy or store the user’s credential somewhere because we will need those later <img src="/images/IAM3.png" alt="" /></p>
+  </li>
+</ol>
+
+<h5 id="step-3-configure-aws-cli-on-server">Step 3: Configure AWS cli on server</h5>
+<p>Next we follow the simple configuration <a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-quick-configuration">guide</a> from AWS to setup the AWS CLI with the above credentials (take note about your current zone as well. For example: Singapore is “ap-southeast-1”).</p>
+
+<figure class="highlight"><pre><code class="language-shell" data-lang="shell"><span class="nv">$ </span>aws configure
+AWS Access Key ID <span class="o">[</span>None]: AKIAIOSFODNN7EXAMPLE
+AWS Secret Access Key <span class="o">[</span>None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+Default region name <span class="o">[</span>None]: us-west-2
+Default output format <span class="o">[</span>None]: json</code></pre></figure>
+
+<h5 id="step-4-add-a-bucket-on-s3-for-your-erpnext">Step 4: Add a bucket on S3 for your ERPNext</h5>
+<p>From <a href="https://console.aws.amazon.com/s3/home">S3 console</a> home, create a new bucket for your ERPNext. 
+<img src="/images/S3-create-bucket.png" alt="" /></p>
+
+<h5 id="step-5-add-script-to-backup-and-upload-to-s3">Step 5: Add script to backup and upload to S3</h5>
+<p>The short script below will call the backup command from <strong>ERPNext’s</strong> <code>bench</code> and extract those file names and upload to a folder based on the timestamp of the execution. Save this as <code>/home/frappe/frappe-bench/backup.sh</code>. Remember to replace <code>yourbucket</code> with the actual name of your bucket created above.</p>
+
+<figure class="highlight"><pre><code class="language-perl" data-lang="perl"><span class="c1">#!/bin/bash</span>
+
+<span class="c1"># Get both DB and files backups</span>
+<span class="nv">echo</span> <span class="s">"========== Start backing up to AWS =========="</span>
+<span class="nv">p</span><span class="o">=</span><span class="vg">$(</span><span class="sr">/usr/local/bin/</span><span class="nv">bench</span> <span class="nv">backup</span> <span class="o">--</span><span class="nv">with</span><span class="o">-</span><span class="nv">files</span> <span class="o">|</span><span class="nv">rev</span> <span class="o">|</span> <span class="nv">cut</span> <span class="o">-</span><span class="nv">d</span><span class="s">' '</span> <span class="o">-</span><span class="nv">f</span> <span class="mi">1</span> <span class="o">|</span> <span class="nv">rev</span><span class="p">)</span>
+<span class="nb">read</span> <span class="nv">db</span> <span class="nv">files</span><span class="o">&lt;&lt;&lt;</span><span class="nv">$</span><span class="err">(</span><span class="nv">echo</span> <span class="nv">$p</span> <span class="o">|</span> <span class="nv">cut</span> <span class="o">-</span><span class="nv">d</span><span class="s">' '</span> <span class="o">-</span><span class="nv">f</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Folder name by date and time</span>
+<span class="nv">folder</span><span class="o">=</span><span class="nv">$</span><span class="err">(</span><span class="nv">date</span> <span class="o">+%</span><span class="nv">d</span><span class="o">%</span><span class="sr">m%Y_%</span><span class="nv">H</span><span class="o">%</span><span class="nv">M</span><span class="o">%</span><span class="nv">S</span> <span class="o">|</span> <span class="nv">sed</span> <span class="s">'s/\(:[0-9][0-9]\)[0-9]*$/\1/'</span><span class="p">)</span>
+<span class="nv">echo</span> <span class="s">"New S3 backup folder: $folder. DB file:  $db. Zip file: $files"</span> 
+
+<span class="c1"># Upload files</span>
+<span class="sr">/usr/local/bin/a</span><span class="nv">ws</span> <span class="nv">s3</span> <span class="sr">mv $db s3://yourbucket/$folder/ &amp;&amp; /usr/local/bin/aws s3 mv</span> <span class="nv">$files</span> <span class="nv">s3:</span><span class="sr">//</span><span class="nv">yourbucket</span><span class="sr">/$folder/</span></code></pre></figure>
+
+<p>To test the script, run <code>bash backup.sh</code>. If it succeeds, you should see something similar to this:</p>
+
+<figure class="highlight"><pre><code class="language-perl" data-lang="perl"><span class="o">==========</span> <span class="nv">Start</span> <span class="nv">backing</span> <span class="nv">up</span> <span class="nv">to</span> <span class="nv">AWS</span> <span class="o">==========</span>
+<span class="nv">New</span> <span class="nv">S3</span> <span class="nv">backup</span> <span class="nv">folder:</span> <span class="mi">19112016_121501</span><span class="o">.</span> <span class="nv">DB</span> <span class="nv">file:</span>  <span class="sr">/home/</span><span class="nv">frappe</span><span class="sr">/frappe-bench/si</span><span class="nv">tes</span><span class="sr">/site1.local/p</span><span class="nv">rivate</span><span class="sr">/backups/</span><span class="mi">20161119_4499102</span><span class="nv">_database</span><span class="o">.</span><span class="nv">sql</span><span class="o">.</span><span class="nv">gz</span><span class="o">.</span> <span class="nv">Zip</span> <span class="nv">file:</span> <span class="sr">/home/</span><span class="nv">frappe</span><span class="sr">/frappe-bench/si</span><span class="nv">tes</span><span class="sr">/site1.local/p</span><span class="nv">rivate</span><span class="sr">/backups/</span><span class="mi">20161119_4499102</span><span class="nv">_files</span><span class="o">.</span><span class="nv">tar</span>
+<span class="sr">move: sites/site1.local/private/backups/20161119_4499102_database.sql.gz to s3://you</span><span class="nv">rbucket</span><span class="sr">/19112016_121501/</span><span class="mi">20161119_4499102</span><span class="nv">_database</span><span class="o">.</span><span class="nv">sql</span><span class="o">.</span><span class="nv">gz</span>
+<span class="sr">move: sites/site1.local/private/backups/20161119_4499102_files.tar to s3://you</span><span class="nv">rbucket</span><span class="sr">/19112016_121501/</span><span class="mi">20161119_4499102</span><span class="nv">_files</span><span class="o">.</span><span class="nv">tar</span></code></pre></figure>
+
+<p>And on S3, your file will appear as follow:
+<img src="/images/S3-upload.png" alt="" /></p>
+
+<h5 id="step-6-add-crontab-to-automate-the-backing-up">Step 6: Add crontab to automate the backing up</h5>
+<p>Once the script is working properly, the last step is to set up the cron service to do this automatically. Edit the crontab by <code>crontab -e</code>. You will see the default backup by ERPNext:</p>
+
+<figure class="highlight"><pre><code class="language-perl" data-lang="perl"><span class="mi">0</span> <span class="o">*</span><span class="sr">/6 * * *  cd /</span><span class="nv">home</span><span class="sr">/frappe/</span><span class="nv">frappe</span><span class="o">-</span><span class="nv">bench</span> <span class="o">&amp;&amp;</span> <span class="sr">/usr/local/bin/</span><span class="nv">bench</span> <span class="o">--</span><span class="nv">site</span> <span class="nv">all</span> <span class="nv">backup</span> <span class="o">&gt;&gt;</span> <span class="sr">/home/</span><span class="nv">frappe</span><span class="sr">/frappe-bench/logs</span><span class="o">/</span><span class="nv">backup</span><span class="o">.</span><span class="nb">log</span><span class="nv">$</span></code></pre></figure>
+
+<p>Add this line to execute the backup command everyday at <strong>00:00 AM</strong>. To customize the frequency of backup, please refer to crontab’s documentation</p>
+
+<figure class="highlight"><pre><code class="language-perl" data-lang="perl"><span class="mi">0</span> <span class="mi">0</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="sr">/bin/</span><span class="nv">bash</span> <span class="sr">/home/</span><span class="nv">frappe</span><span class="sr">/frappe-bench/</span><span class="nv">backup</span><span class="o">.</span><span class="nv">sh</span> <span class="o">&gt;&gt;</span> <span class="sr">/home/</span><span class="nv">frappe</span><span class="sr">/frappe-bench/logs</span><span class="o">/</span><span class="nv">aws</span><span class="o">-</span><span class="nv">backup</span><span class="o">.</span><span class="nb">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span></code></pre></figure>
+
+<p>Then restart the cron service with root access</p>
+
+<figure class="highlight"><pre><code class="language-perl" data-lang="perl"><span class="p">[</span><span class="nv">frappe</span><span class="p">]</span> <span class="nv">sudo</span> <span class="nv">service</span> <span class="nv">cron</span> <span class="nv">restart</span>
+<span class="nv">cron</span> <span class="nv">stop</span><span class="o">/</span><span class="nv">waiting</span>
+<span class="nv">cron</span> <span class="nv">start</span><span class="o">/</span><span class="nv">running</span><span class="p">,</span> <span class="nv">process</span> <span class="mi">5998</span></code></pre></figure>
+
+<p>Voila, you got the ERPNext’s files automatically backed up to AWS S3 everyday. This helps reduce the risk of losing important data on ERPNext server, especially in case the server is damaged.`</p>
+
+  </div>
+
+  <div class="date">
+    Written on November 19, 2016
+  </div>
+
+  
+<div class="comments">
+	<div id="disqus_thread"></div>
+	<script type="text/javascript">
+
+	    var disqus_shortname = 'nathandlb-com';
+
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+
+</article>
+
+    </div>
+    <div class="wrapper-footer">
+      <div class="container">
+        <footer class="footer">
+          
+
+
+
+<a href="https://github.com/nathando"><i class="svg-icon github"></i></a>
+
+<a href="https://www.linkedin.com/in/nathando"><i class="svg-icon linkedin"></i></a>
+
+
+<a href="https://www.twitter.com/nathandlb"><i class="svg-icon twitter"></i></a>
+<a href="http://stackoverflow.com/users/1149484/nathan-do"><i class="svg-icon stackoverflow"></i></a>
+
+
+        </footer>
+      </div>
+    </div>
+
+    
+	<!-- Google Analytics -->
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-104939362-1', 'auto');
+		ga('send', 'pageview', {
+		  'page': '/2016/11/19/Auto-backup-ERPNext.html',
+		  'title': 'Auto backup ERPNext DB and public files to AWS S3'
+		});
+	</script>
+	<!-- End Google Analytics -->
+
+
+    <script type="text/javascript" src="/plugins/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/plugins/foundation/foundation.min.js"></script>
+    <script type="text/javascript" src="/js/main.js"></script>
+  </body>
+</html>
