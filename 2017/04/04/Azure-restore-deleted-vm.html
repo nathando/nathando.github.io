@@ -150,16 +150,16 @@ Go back to your resource group and click on the “Deployment” portion</p>
 
 <p>It will proceed to allow to edit a JSON file with the plan information that we need to include in our new template from step 2. The plan info looks some thing like this:</p>
 
-<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="s2">"resources"</span><span class="p">:</span> <span class="p">[</span>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="dl">"</span><span class="s2">resources</span><span class="dl">"</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Microsoft.Compute/virtualMachines"</span><span class="p">,</span>
-            <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"[parameters('virtualMachineName')]"</span><span class="p">,</span>
-            <span class="s2">"apiVersion"</span><span class="p">:</span> <span class="s2">"2016-04-30-preview"</span><span class="p">,</span>
-            <span class="s2">"location"</span><span class="p">:</span> <span class="s2">"[parameters('location')]"</span><span class="p">,</span>
-            <span class="s2">"plan"</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"9-5"</span><span class="p">,</span>
-                <span class="s2">"publisher"</span><span class="p">:</span> <span class="s2">"bitnami"</span><span class="p">,</span>
-                <span class="s2">"product"</span><span class="p">:</span> <span class="s2">"postgresql"</span>
+            <span class="dl">"</span><span class="s2">type</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Microsoft.Compute/virtualMachines</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">[parameters('virtualMachineName')]</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">apiVersion</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">2016-04-30-preview</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">location</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">[parameters('location')]</span><span class="dl">"</span><span class="p">,</span>
+            <span class="dl">"</span><span class="s2">plan</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">9-5</span><span class="dl">"</span><span class="p">,</span>
+                <span class="dl">"</span><span class="s2">publisher</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">bitnami</span><span class="dl">"</span><span class="p">,</span>
+                <span class="dl">"</span><span class="s2">product</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">postgresql</span><span class="dl">"</span>
             <span class="p">},</span>
             <span class="p">...</span> 
         <span class="p">}</span>
