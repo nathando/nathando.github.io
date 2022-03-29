@@ -1,4 +1,115 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2021-07-03T15:48:20+07:00</updated><id>/feed.xml</id><title type="html">Nathan Do</title><subtitle>life_of.py</subtitle><entry xml:lang="vn"><title type="html">2020 - Thời gian là tương đối - 2021 Sài Gòn bị thương</title><link href="/2021/07/03/Thoi-gian-tuong-doi.html" rel="alternate" type="text/html" title="2020 - Thời gian là tương đối - 2021 Sài Gòn bị thương" /><published>2021-07-03T00:00:00+07:00</published><updated>2021-07-03T00:00:00+07:00</updated><id>/2021/07/03/Thoi-gian-tuong-doi</id><content type="html" xml:base="/2021/07/03/Thoi-gian-tuong-doi.html">&lt;h1 id=&quot;năm-2020&quot;&gt;Năm 2020&lt;/h1&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-03-29T23:56:13+08:00</updated><id>/feed.xml</id><title type="html">Nathan Do</title><subtitle>life_of.py</subtitle><entry xml:lang="en"><title type="html">Upgrade ERPNext from v5 to v13</title><link href="/2021/08/24/ERPNext-Upgrade-from-5-to-13.html" rel="alternate" type="text/html" title="Upgrade ERPNext from v5 to v13" /><published>2021-08-24T00:00:00+08:00</published><updated>2021-08-24T00:00:00+08:00</updated><id>/2021/08/24/ERPNext-Upgrade-from-5-to-13</id><content type="html" xml:base="/2021/08/24/ERPNext-Upgrade-from-5-to-13.html">&lt;h2 id=&quot;why-&quot;&gt;Why ?&lt;/h2&gt;
+&lt;p&gt;My ERPNext venture has been halted for a long while. However, we do have an existing customer to support.&lt;br /&gt;
+They have been using the system for a long while without any issue. 
+However, no upgrade means no new features and this time they are really in need of that&lt;/p&gt;
+
+&lt;h2 id=&quot;first-attempt---total-failure-&quot;&gt;First attempt - total failure …&lt;/h2&gt;
+&lt;p&gt;So the first thing I’ve tried was just going head on with upgrading (on a brand new clone of the server, of course).&lt;br /&gt;
+And it turned out … terribly. How’s so ?&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;If there are custom change on your erpnext repository, you have to reset it to master branch first&lt;/li&gt;
+  &lt;li&gt;If you have custom modules, of course, disable them first&lt;/li&gt;
+  &lt;li&gt;Script to upgrade then run based on your current database and the amount of changes are crazy&lt;/li&gt;
+  &lt;li&gt;v5 was using python2 and v13 is using python3 (of course)&lt;/li&gt;
+  &lt;li&gt;There is no minimal success baseline for you to build upon. Everything just failed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In fact, after spending a few days on this, I was about to give up all together…&lt;/p&gt;
+
+&lt;h2 id=&quot;second-attempt---finally-see-some-lights&quot;&gt;Second attempt - finally see some lights&lt;/h2&gt;
+&lt;p&gt;Now, breathe and take a step back. This is not the only (real) way.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Back up the data (the database and the media files)&lt;/li&gt;
+  &lt;li&gt;Back up the changes you have customised on&lt;/li&gt;
+  &lt;li&gt;Install the completely new version&lt;/li&gt;
+  &lt;li&gt;Restore the database on this new instance&lt;/li&gt;
+  &lt;li&gt;Run migrations (–skip-failure)&lt;/li&gt;
+  &lt;li&gt;Try to fix migration issues one by one&lt;/li&gt;
+  &lt;li&gt;Manually migrate certain data that has been changed&lt;/li&gt;
+  &lt;li&gt;Reapply changes from modules and customizations&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;steps-that-i-have-taken&quot;&gt;Steps that I have taken&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Back up old Instance &lt;code&gt;bench backup —with-files&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Install new install v13 vanila&lt;/li&gt;
+  &lt;li&gt;Download all files to new instance and make sure have enough space.
+So that when you restore it doesn’t fail because not enough space.&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;bench mariadb&lt;/code&gt; and &lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/repair-table.html&quot;&gt;Repair table&lt;/a&gt; in mariadb&lt;/li&gt;
+  &lt;li&gt;Then restore the database and files with
+    &lt;pre&gt;&lt;code class=&quot;language-shell&quot;&gt;bench restore path/to/sql --with-public-files path/to/public_files.gz --with-private-files path/to/private_files.gz
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Migrate but skipp all failed migrations: &lt;code&gt;bench migrate —skip-failing&lt;/code&gt;
+From here on it depend on what errors will you encounter.&lt;/li&gt;
+  &lt;li&gt;Set Email Account uidnext = 0
+    &lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;SET SQL_SAFE_UPDATES = 0;
+update `tabEmail Account` set uidnext = &apos;0&apos; where trim(coalesce(uidnext, &apos;&apos;)) = &apos;&apos;;
+SET SQL_SAFE_UPDATES = 1;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Delete Custom Field sales_uom -&amp;gt; might want to copy data
+    &lt;ul&gt;
+      &lt;li&gt;select * from &lt;code&gt;tabCustom Field&lt;/code&gt; where name like ‘%sales_uom%’;&lt;/li&gt;
+      &lt;li&gt;delete from &lt;code&gt;tabCustom Field&lt;/code&gt; where name = ‘Item-sales_uom’;&lt;/li&gt;
+      &lt;li&gt;delete from &lt;code&gt;tabCustom Field&lt;/code&gt; where name = ‘Item-purchase_uom’;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Quotation Item: Copy Stock UOM to UOM for existing items
+    &lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;set sql_safe_updates = 0;
+update `tabQuotation Item` set uom = stock_uom;
+set sql_safe_updates = 1;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Solve patch issue&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Patch: erpnext.patches.v11_0.create_salary_structure_assignments&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;pymysql.err.OperationalError: (1054, &quot;Unknown column &apos;sse.from_date&apos; in &apos;field list&apos;&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Fix:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;alter table `tabSalary Structure Employee` add column (from_date DATETIME DEFAULT current_timestamp(), to_date DATETIME DEFAULT current_timestamp());
+set sql_safe_updates = 0;
+update `tabSalary Structure Employee` set from_date = &apos;2021-01-01 00:00:00&apos;;
+update `tabSalary Structure Employee` set to_date = &apos;2021-12-31 00:00:00&apos;;
+set sql_safe_updates = 1;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Solve patch issue:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Patch: erpnext.patches.v12_0.move_item_tax_to_item_tax_template&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Fix:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;insert into `tabSingles` (doctype, field, value) values (&apos;Accounts Settings&apos;, &apos;allow_stale&apos;, 1);
+insert into `tabSingles` (doctype, field, value) values (&apos;Accounts Settings&apos;, &apos;stale_days&apos;, 2);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Solve patch issue 
+&lt;strong&gt;Patch: erpnext.patches.v13_0.rename_issue_doctype_fields&lt;/strong&gt;
+Fix
+    &lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;update `tabIssue` set resolution_by_variance = 1;
+update `tabIssue` set response_by_variance = 1;
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;After fixing all patch issues, run &lt;code&gt;bench migrate&lt;/code&gt; again without &lt;code&gt;--skip-failing&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Install vuejs &lt;code&gt;npm install vue (first time)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Run bench update &lt;code&gt;bench update —reset&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Remember to enable scheduler &lt;code&gt;bench --site all enable-scheduler&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;At this point, hopefully you would also have a working version of new ERPNext v13 already. To be honest, that was a lot of hours (even days) of mine. And I hope someone else can find that useful.
+&lt;img src=&quot;https://user-images.githubusercontent.com/13928957/106147523-f69a5000-619d-11eb-8034-e46c0493605f.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Of course, the biggest lesson would be update earlier when the work is not too intimidating…&lt;/p&gt;
+
+&lt;p&gt;Enjoy!&lt;br /&gt;
+Nathan&lt;/p&gt;</content><author><name></name></author><category term="tech" /><summary type="html">Why ? My ERPNext venture has been halted for a long while. However, we do have an existing customer to support. They have been using the system for a long while without any issue. However, no upgrade means no new features and this time they are really in need of that</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/erpnext-logo-copy.png" /></entry><entry xml:lang="vn"><title type="html">2020 - Thời gian là tương đối - 2021 Sài Gòn bị thương</title><link href="/2021/07/03/Thoi-gian-tuong-doi.html" rel="alternate" type="text/html" title="2020 - Thời gian là tương đối - 2021 Sài Gòn bị thương" /><published>2021-07-03T00:00:00+08:00</published><updated>2021-07-03T00:00:00+08:00</updated><id>/2021/07/03/Thoi-gian-tuong-doi</id><content type="html" xml:base="/2021/07/03/Thoi-gian-tuong-doi.html">&lt;h1 id=&quot;năm-2020&quot;&gt;Năm 2020&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Tháng 2 năm 2020&lt;/strong&gt; đánh dấu ngày An ra đời giữa lúc đại dịch bắt đầu bùng phát.&lt;br /&gt;
 Năm 2020 trôi qua vừa nhanh vừa chậm, theo một cách khó diễn tả.&lt;/p&gt;
 
@@ -27,7 +138,7 @@ Chắc chắn sẽ tìm một quỹ nào đó để quyên góp cho thành phố
 
 &lt;p&gt;&lt;strong&gt;Sài Gòn cố lên, chúng ta sẽ bật mạnh hơn gấp nhiều lần sau dịch !!!&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/2021Jul/saigon.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="life" /><summary type="html">Năm 2020 Tháng 2 năm 2020 đánh dấu ngày An ra đời giữa lúc đại dịch bắt đầu bùng phát. Năm 2020 trôi qua vừa nhanh vừa chậm, theo một cách khó diễn tả.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2021Jul/time.jpg" /></entry><entry xml:lang="en"><title type="html">Death and FOMO</title><link href="/2021/05/08/Death-and-FOMO.html" rel="alternate" type="text/html" title="Death and FOMO" /><published>2021-05-08T00:00:00+07:00</published><updated>2021-05-08T00:00:00+07:00</updated><id>/2021/05/08/Death-and-FOMO</id><content type="html" xml:base="/2021/05/08/Death-and-FOMO.html">&lt;h4 id=&quot;the-shock&quot;&gt;The Shock&lt;/h4&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2021Jul/saigon.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="life" /><summary type="html">Năm 2020 Tháng 2 năm 2020 đánh dấu ngày An ra đời giữa lúc đại dịch bắt đầu bùng phát. Năm 2020 trôi qua vừa nhanh vừa chậm, theo một cách khó diễn tả.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2021Jul/time.jpg" /></entry><entry xml:lang="en"><title type="html">Death and FOMO</title><link href="/2021/05/08/Death-and-FOMO.html" rel="alternate" type="text/html" title="Death and FOMO" /><published>2021-05-08T00:00:00+08:00</published><updated>2021-05-08T00:00:00+08:00</updated><id>/2021/05/08/Death-and-FOMO</id><content type="html" xml:base="/2021/05/08/Death-and-FOMO.html">&lt;h4 id=&quot;the-shock&quot;&gt;The Shock&lt;/h4&gt;
 
 &lt;p&gt;A friend of mine since secondary school has passed away last week. We have been sitting together on the same table (only the 2 of us) for a whole year. So much laughter and so many class rules broken. After high school, however, we have sort of gone down different paths but in my mind, he was still always very close. Always smiling and talk a lot. That’s him.&lt;/p&gt;
 
@@ -68,7 +179,7 @@ You are already naked. There is no reason not to follow your heart.&lt;/p&gt;
 
 &lt;div class=&quot;video-container&quot;&gt;
 &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/xoUfvIb-9U4&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
-&lt;/div&gt;</content><author><name></name></author><category term="life" /><summary type="html">The Shock</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2021May/guy-umbrella.jpg" /></entry><entry xml:lang="vn"><title type="html">Viet An 2020</title><link href="/2020/03/29/Viet-An.html" rel="alternate" type="text/html" title="Viet An 2020" /><published>2020-03-29T00:00:00+07:00</published><updated>2020-03-29T00:00:00+07:00</updated><id>/2020/03/29/Viet-An</id><content type="html" xml:base="/2020/03/29/Viet-An.html">&lt;h1 id=&quot;việt-an-19feb2020&quot;&gt;Việt An 19/Feb/2020&lt;/h1&gt;
+&lt;/div&gt;</content><author><name></name></author><category term="life" /><summary type="html">The Shock</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2021May/guy-umbrella.jpg" /></entry><entry xml:lang="vn"><title type="html">Viet An 2020</title><link href="/2020/03/29/Viet-An.html" rel="alternate" type="text/html" title="Viet An 2020" /><published>2020-03-29T00:00:00+08:00</published><updated>2020-03-29T00:00:00+08:00</updated><id>/2020/03/29/Viet-An</id><content type="html" xml:base="/2020/03/29/Viet-An.html">&lt;h1 id=&quot;việt-an-19feb2020&quot;&gt;Việt An 19/Feb/2020&lt;/h1&gt;
 &lt;p&gt;Ngày 19 tháng 2, từ nay trở thành một ngày hết sức đặc biệt. Ngày con gái chào đời. Blog đầu tiên bằng tiếng Việt của mình đánh dấu một hành trình mới.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;An&lt;/strong&gt; sinh ra giữa lúc đại dịch đang làm xáo trộn tất cả mọi thứ. Chính phủ phải phong toả thành phố, mọi người phải giữ khoảng cách với nhau đề phòng dịch bệnh. Hàng quán phải theo lệnh đóng cửa. Điểm tích cực duy nhất là mức độ ô nhiễm của Sài Gòn giảm đáng kể, phố xá vắng lặng. Điều mà nhiều thập kỷ qua không hề thấy được. Học sinh có kỳ nghỉ Tết dài nhất trong nhiều chục năm, có lẽ là trong cả đời đi học.&lt;/p&gt;
@@ -88,7 +199,7 @@ You are already naked. There is no reason not to follow your heart.&lt;/p&gt;
 &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/5ATqv5Kpfyc&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 
-&lt;p&gt;29 Mar 2020&lt;/p&gt;</content><author><name></name></author><category term="life" /><summary type="html">Việt An 19/Feb/2020 Ngày 19 tháng 2, từ nay trở thành một ngày hết sức đặc biệt. Ngày con gái chào đời. Blog đầu tiên bằng tiếng Việt của mình đánh dấu một hành trình mới.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2020Mar/baby.jpg" /></entry><entry xml:lang="en"><title type="html">A new decade</title><link href="/2020/01/01/A-new-decade.html" rel="alternate" type="text/html" title="A new decade" /><published>2020-01-01T00:00:00+07:00</published><updated>2020-01-01T00:00:00+07:00</updated><id>/2020/01/01/A-new-decade</id><content type="html" xml:base="/2020/01/01/A-new-decade.html">&lt;blockquote&gt;
+&lt;p&gt;29 Mar 2020&lt;/p&gt;</content><author><name></name></author><category term="life" /><summary type="html">Việt An 19/Feb/2020 Ngày 19 tháng 2, từ nay trở thành một ngày hết sức đặc biệt. Ngày con gái chào đời. Blog đầu tiên bằng tiếng Việt của mình đánh dấu một hành trình mới.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2020Mar/baby.jpg" /></entry><entry xml:lang="en"><title type="html">A new decade</title><link href="/2020/01/01/A-new-decade.html" rel="alternate" type="text/html" title="A new decade" /><published>2020-01-01T00:00:00+08:00</published><updated>2020-01-01T00:00:00+08:00</updated><id>/2020/01/01/A-new-decade</id><content type="html" xml:base="/2020/01/01/A-new-decade.html">&lt;blockquote&gt;
   &lt;p&gt;Life was not designed to give us what we want but life was designed to give us what we deserved&lt;/p&gt;
   &lt;p class=&quot;author&quot;&gt;Jim Rohn&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -126,7 +237,7 @@ It applies to not only money but also our growth. A bit everyday is the best way
 &lt;p&gt;&lt;strong&gt;Habit is king, not perfection (so don’t waste time trying to make it perfect)&lt;/strong&gt;. It determines our behaviors, our characteristics. And therefore, our future, our successes.
 Habits make us that magnet which can attract success, habits make us what we become, therefore, what we deserved.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/2020Jan/thesun.jpg&quot; class=&quot;img-auto&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="life" /><summary type="html">Life was not designed to give us what we want but life was designed to give us what we deserved Jim Rohn</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2020Jan/2020.jpg" /></entry><entry xml:lang="en"><title type="html">Binary</title><link href="/2019/11/25/When-everything-is-binary.html" rel="alternate" type="text/html" title="Binary" /><published>2019-11-25T00:00:00+07:00</published><updated>2019-11-25T00:00:00+07:00</updated><id>/2019/11/25/When-everything-is-binary</id><content type="html" xml:base="/2019/11/25/When-everything-is-binary.html">&lt;p&gt;The title might make you think that it is a tech-related post.&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;/images/2020Jan/thesun.jpg&quot; class=&quot;img-auto&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="life" /><summary type="html">Life was not designed to give us what we want but life was designed to give us what we deserved Jim Rohn</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2020Jan/2020.jpg" /></entry><entry xml:lang="en"><title type="html">Binary</title><link href="/2019/11/25/When-everything-is-binary.html" rel="alternate" type="text/html" title="Binary" /><published>2019-11-25T00:00:00+08:00</published><updated>2019-11-25T00:00:00+08:00</updated><id>/2019/11/25/When-everything-is-binary</id><content type="html" xml:base="/2019/11/25/When-everything-is-binary.html">&lt;p&gt;The title might make you think that it is a tech-related post.&lt;br /&gt;
 But by this &lt;code&gt;binary&lt;/code&gt;, I meant the polarizing extremes I’ve observed in life. 
 And those ain’t working.&lt;/p&gt;
 
@@ -178,7 +289,7 @@ As much as I admire the genius of those marketing tactics, it will lead our worl
 &lt;strong&gt;Jon Jandai&lt;/strong&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/y_E0KwE7zL0&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;</content><author><name></name></author><category term="life" /><summary type="html">The title might make you think that it is a tech-related post. But by this binary, I meant the polarizing extremes I’ve observed in life. And those ain’t working.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Nov/binary-logo.jpg" /></entry><entry xml:lang="en"><title type="html">Docker compose to AWS ECS Part 1</title><link href="/2019/11/03/Docker-compose-to-AWS-ECS.html" rel="alternate" type="text/html" title="Docker compose to AWS ECS Part 1" /><published>2019-11-03T00:00:00+07:00</published><updated>2019-11-03T00:00:00+07:00</updated><id>/2019/11/03/Docker-compose-to-AWS-ECS</id><content type="html" xml:base="/2019/11/03/Docker-compose-to-AWS-ECS.html">&lt;h2 id=&quot;what-are-docker-and-docker-compose-&quot;&gt;What are &lt;code&gt;Docker&lt;/code&gt; and &lt;code&gt;Docker-compose&lt;/code&gt; ?&lt;/h2&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/y_E0KwE7zL0&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;</content><author><name></name></author><category term="life" /><summary type="html">The title might make you think that it is a tech-related post. But by this binary, I meant the polarizing extremes I’ve observed in life. And those ain’t working.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Nov/binary-logo.jpg" /></entry><entry xml:lang="en"><title type="html">Docker compose to AWS ECS Part 1</title><link href="/2019/11/03/Docker-compose-to-AWS-ECS.html" rel="alternate" type="text/html" title="Docker compose to AWS ECS Part 1" /><published>2019-11-03T00:00:00+08:00</published><updated>2019-11-03T00:00:00+08:00</updated><id>/2019/11/03/Docker-compose-to-AWS-ECS</id><content type="html" xml:base="/2019/11/03/Docker-compose-to-AWS-ECS.html">&lt;h2 id=&quot;what-are-docker-and-docker-compose-&quot;&gt;What are &lt;code&gt;Docker&lt;/code&gt; and &lt;code&gt;Docker-compose&lt;/code&gt; ?&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;Docker&lt;/code&gt; is a popular technology that allows us to run applications in isolated containers. 
 It is similar to the old concept of virtual machines but running faster and consume less computing power.&lt;br /&gt;
@@ -363,7 +474,7 @@ With all the section above, we can put everything together as a final json (save
   &lt;li&gt;Define healthchecks for containers so that we know if the container service is healthy&lt;/li&gt;
   &lt;li&gt;Mount docker volumes and use them in containers&lt;/li&gt;
   &lt;li&gt;Define service for the long running tasks and update the service with new task version&lt;/li&gt;
-&lt;/ul&gt;</content><author><name></name></author><category term="tech" /><category term="work" /><summary type="html">What are Docker and Docker-compose ?</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Nov/compose-ecs.png" /></entry><entry xml:lang="en"><title type="html">My SG cities</title><link href="/2019/07/26/My-SG-Cities.html" rel="alternate" type="text/html" title="My SG cities" /><published>2019-07-26T00:00:00+07:00</published><updated>2019-07-26T00:00:00+07:00</updated><id>/2019/07/26/My-SG-Cities</id><content type="html" xml:base="/2019/07/26/My-SG-Cities.html">&lt;p&gt;&lt;strong&gt;Singapore - Saigon, my “SG” duo&lt;/strong&gt;&lt;/p&gt;
+&lt;/ul&gt;</content><author><name></name></author><category term="tech" /><category term="work" /><summary type="html">What are Docker and Docker-compose ?</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Nov/compose-ecs.png" /></entry><entry xml:lang="en"><title type="html">My SG cities</title><link href="/2019/07/26/My-SG-Cities.html" rel="alternate" type="text/html" title="My SG cities" /><published>2019-07-26T00:00:00+08:00</published><updated>2019-07-26T00:00:00+08:00</updated><id>/2019/07/26/My-SG-Cities</id><content type="html" xml:base="/2019/07/26/My-SG-Cities.html">&lt;p&gt;&lt;strong&gt;Singapore - Saigon, my “SG” duo&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;2am at Jewel, Singapore. My flight back to Saigon will take off at 7am.&lt;/p&gt;
 
@@ -411,7 +522,7 @@ Therefore, there are more opportunities as well.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Singapore will then be happier and Saigon will be then more advanced and comfortable.&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;This is the end of my rambling, see you again maybe at another 2am.&lt;/p&gt;</content><author><name></name></author><category term="life" /><category term="work" /><summary type="html">Singapore - Saigon, my “SG” duo</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Jul/sg-duo.png" /></entry><entry xml:lang="en"><title type="html">Music from command line</title><link href="/2019/03/03/Music-from-command.html" rel="alternate" type="text/html" title="Music from command line" /><published>2019-03-03T00:00:00+07:00</published><updated>2019-03-03T00:00:00+07:00</updated><id>/2019/03/03/Music-from-command</id><content type="html" xml:base="/2019/03/03/Music-from-command.html">&lt;p&gt;Pretty sure I am very late to the game but only recently I’ve found out how to 
+&lt;p&gt;This is the end of my rambling, see you again maybe at another 2am.&lt;/p&gt;</content><author><name></name></author><category term="life" /><category term="work" /><summary type="html">Singapore - Saigon, my “SG” duo</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Jul/sg-duo.png" /></entry><entry xml:lang="en"><title type="html">Music from command line</title><link href="/2019/03/03/Music-from-command.html" rel="alternate" type="text/html" title="Music from command line" /><published>2019-03-03T00:00:00+08:00</published><updated>2019-03-03T00:00:00+08:00</updated><id>/2019/03/03/Music-from-command</id><content type="html" xml:base="/2019/03/03/Music-from-command.html">&lt;p&gt;Pretty sure I am very late to the game but only recently I’ve found out how to 
 download and listen to music right from the &lt;code&gt;Terminal&lt;/code&gt; (or &lt;code&gt;iTerm2&lt;/code&gt;, whichever your terminal is).&lt;/p&gt;
 
 &lt;p&gt;It’s great, everything is seamless.
@@ -526,7 +637,7 @@ As of the 2 video above, here is what it will look like after we’ve added them
 &lt;p&gt;One thing I definitely loved about &lt;code&gt;cmus&lt;/code&gt; is that the navigation keys are &lt;code&gt;j&lt;/code&gt;, &lt;code&gt;k&lt;/code&gt; for up and down which is super familiar if you used &lt;code&gt;vim&lt;/code&gt;. So again, everything is seamless. 
 There are much more functionalities of cmus to explore and I am still in the learning process.&lt;/p&gt;
 
-&lt;p&gt;Hope you will find this useful if you are also late to the game :)&lt;/p&gt;</content><author><name></name></author><category term="life" /><category term="music" /><summary type="html">Pretty sure I am very late to the game but only recently I’ve found out how to download and listen to music right from the Terminal (or iTerm2, whichever your terminal is).</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Mar/post-music.jpg" /></entry><entry xml:lang="en"><title type="html">Happy New Year 2019!</title><link href="/2019/01/06/2018-Review.html" rel="alternate" type="text/html" title="Happy New Year 2019!" /><published>2019-01-06T00:00:00+07:00</published><updated>2019-01-06T00:00:00+07:00</updated><id>/2019/01/06/2018-Review</id><content type="html" xml:base="/2019/01/06/2018-Review.html">&lt;p&gt;I have stopped blogging for a while, more than a year and a half to be more accurate.
+&lt;p&gt;Hope you will find this useful if you are also late to the game :)&lt;/p&gt;</content><author><name></name></author><category term="life" /><category term="music" /><summary type="html">Pretty sure I am very late to the game but only recently I’ve found out how to download and listen to music right from the Terminal (or iTerm2, whichever your terminal is).</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Mar/post-music.jpg" /></entry><entry xml:lang="en"><title type="html">Happy New Year 2019!</title><link href="/2019/01/06/2018-Review.html" rel="alternate" type="text/html" title="Happy New Year 2019!" /><published>2019-01-06T00:00:00+08:00</published><updated>2019-01-06T00:00:00+08:00</updated><id>/2019/01/06/2018-Review</id><content type="html" xml:base="/2019/01/06/2018-Review.html">&lt;p&gt;I have stopped blogging for a while, more than a year and a half to be more accurate.
 Last year has been tough when I have had to juggled between a crazily time-consuming full time job and my own ERPNext venture.
 It’s a pity that in the end, I had to let the venture go, at least for now.
 Though there are quite a few things I’ve learned technically this year but at the same time, there wasn’t any time left to blog about those.&lt;/p&gt;
@@ -540,71 +651,4 @@ Though there are quite a few things I’ve learned technically this year but at 
   &lt;li&gt;Visited beautiful Hunan China and survive on the limited Chinese vocabulary I have. A long overdue break with a lot of fun. Also first time to see snow and it was awesome!&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Just drop here a few lines to remind myself of this year. Now let’s march to 2019 with full power!!!&lt;/p&gt;</content><author><name></name></author><category term="life" /><summary type="html">I have stopped blogging for a while, more than a year and a half to be more accurate. Last year has been tough when I have had to juggled between a crazily time-consuming full time job and my own ERPNext venture. It’s a pity that in the end, I had to let the venture go, at least for now. Though there are quite a few things I’ve learned technically this year but at the same time, there wasn’t any time left to blog about those.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/newyear.png" /></entry><entry xml:lang="en"><title type="html">Azure: Restore a deleted VM</title><link href="/2017/04/04/Azure-restore-deleted-vm.html" rel="alternate" type="text/html" title="Azure: Restore a deleted VM" /><published>2017-04-04T00:00:00+07:00</published><updated>2017-04-04T00:00:00+07:00</updated><id>/2017/04/04/Azure-restore-deleted-vm</id><content type="html" xml:base="/2017/04/04/Azure-restore-deleted-vm.html">&lt;p&gt;Have been using AWS and DO for the past few years, I have some struggles when moving to Azure. For one thing, even with the new portal, Azure’s UI is still cluttering and quite hard to navigate around, let alone using any short cut.&lt;/p&gt;
-
-&lt;p&gt;And so naturally I’ve made mistake, deleted a wrong VM and it disappeared in a few seconds. Only then I’ve realized how stupid that was! On DO, it was supremely easy to just restore a VM or even AWS given that you have the backup set up or made snapshot prior to that. Azure ? I’ve got to search all over the place. Most results show how to do it with PowerShell, but I am on Mac.&lt;/p&gt;
-
-&lt;p&gt;Finally, really glad that I’ve found this &lt;a href=&quot;https://github.com/Azure/azure-quickstart-templates/&quot;&gt;repo&lt;/a&gt;, which contains a list of Azure pre-made templates. Also as it turned out, Azure keeps the OS disk of the VM separately in the storage account. So we can still create another VM with it.&lt;/p&gt;
-
-&lt;p&gt;So here is how to restore a deleted VM:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;1. Find the correct disk image that stored your VM image, copy the VHD Uri&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Check on all your storage account to find the correct disk image for your VM. This could be a bit tricky if you have a lot of VMs since the name may not be descriptive the first time you created.
-  &lt;img src=&quot;/images/azure/storage-acc.png&quot; alt=&quot;&quot; /&gt;
-  &lt;img src=&quot;/images/azure/storage-acc-2.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
-  &lt;li&gt;Find the correct vhd by looking at the name and modified time. Then copy the VHD url for later use
-  &lt;img src=&quot;/images/azure/storage-acc-3.png&quot; alt=&quot;&quot; /&gt;
-  &lt;img src=&quot;/images/azure/storage-acc-4.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;2. Next use the template to create VM from the VHD image.&lt;/strong&gt; &lt;br /&gt;
-Depend on whether you want to create a new VNET or not, you can choose between &lt;a href=&quot;https://github.com/Azure/azure-quickstart-templates/tree/master/201-vm-specialized-vhd-existing-vnet&quot;&gt;this template&lt;/a&gt; and &lt;a href=&quot;https://github.com/Azure/azure-quickstart-templates/tree/master/201-vm-specialized-vhd&quot;&gt;this other template&lt;/a&gt;.&lt;br /&gt;
-Just click &lt;strong&gt;Deploy to Azure&lt;/strong&gt; while already signed in to Azure and it will create a form for you to fill in and create the VM such as follow&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/azure/Microsoft-Azure-Deploy.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Fill in the Vhd Uri obtained above and the rest of the necessary fields. Now, if you create a VM directly from a official image, that’s it, you have your VM back.&lt;/p&gt;
-
-&lt;p&gt;But in my case I was using a third party image from Bitnami and there goes another error. It was along the line of:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;no&quot;&gt;The&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;operation&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;completed&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;terminal&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;provisioning&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;state&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Failed&apos;&lt;/span&gt;
-&lt;span class=&quot;no&quot;&gt;Message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Creating a virtual machine from Marketplace image requires Plan information in the request. OS disk name is abcd-osdisk&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;How to proceed from here ? It’s a bit more trickier… The plan information is still hard to retrieve. So we trace back through log to get it. `&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;3. Add plan information to template&lt;/strong&gt;
-Go back to your resource group and click on the “Deployment” portion&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/azure/Deployment--Microsoft-Azure.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;This leads to a list of previous deployments within the same resource group. Select the one that’ve created your original VM. Then click &lt;strong&gt;View Template&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/azure/Deployment-Template-Azure-1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;It will proceed to allow to edit a JSON file with the plan information that we need to include in our new template from step 2. The plan info looks some thing like this:&lt;/p&gt;
-
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;resources&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Microsoft.Compute/virtualMachines&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;[parameters(&apos;virtualMachineName&apos;)]&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;2016-04-30-preview&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;location&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;[parameters(&apos;location&apos;)]&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-            &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;plan&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-                &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;9-5&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-                &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;publisher&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;bitnami&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-                &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;product&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;postgresql&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-            &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt; 
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-&lt;p&gt;Copy the plan information portion and put it in our template in Step 2 like this (take note that the type where you should insert should be “virtualMachines”:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/azure/Edit-template.png&quot; alt=&quot;&quot; /&gt;
-&lt;img src=&quot;/images/azure/Edit-template---Microsoft-Azure-1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Once done, press save and continue with the template to redeploy your deleted VM.&lt;/p&gt;
-
-&lt;p&gt;Quite some works just to restore a VM. But i am grateful that at least the vhd is not gone together with the VM itself.)&lt;/p&gt;</content><author><name></name></author><category term="azure" /><category term="server" /><category term="tech" /><summary type="html">Have been using AWS and DO for the past few years, I have some struggles when moving to Azure. For one thing, even with the new portal, Azure’s UI is still cluttering and quite hard to navigate around, let alone using any short cut.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/azure/azure-microsoft.png" /></entry></feed>
+&lt;p&gt;Just drop here a few lines to remind myself of this year. Now let’s march to 2019 with full power!!!&lt;/p&gt;</content><author><name></name></author><category term="life" /><summary type="html">I have stopped blogging for a while, more than a year and a half to be more accurate. Last year has been tough when I have had to juggled between a crazily time-consuming full time job and my own ERPNext venture. It’s a pity that in the end, I had to let the venture go, at least for now. Though there are quite a few things I’ve learned technically this year but at the same time, there wasn’t any time left to blog about those.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/newyear.png" /></entry></feed>
