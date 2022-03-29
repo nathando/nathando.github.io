@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-03-29T23:56:13+08:00</updated><id>/feed.xml</id><title type="html">Nathan Do</title><subtitle>life_of.py</subtitle><entry xml:lang="en"><title type="html">Upgrade ERPNext from v5 to v13</title><link href="/2021/08/24/ERPNext-Upgrade-from-5-to-13.html" rel="alternate" type="text/html" title="Upgrade ERPNext from v5 to v13" /><published>2021-08-24T00:00:00+08:00</published><updated>2021-08-24T00:00:00+08:00</updated><id>/2021/08/24/ERPNext-Upgrade-from-5-to-13</id><content type="html" xml:base="/2021/08/24/ERPNext-Upgrade-from-5-to-13.html">&lt;h2 id=&quot;why-&quot;&gt;Why ?&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-03-30T00:04:49+08:00</updated><id>/feed.xml</id><title type="html">Nathan Do</title><subtitle>life_of.py</subtitle><entry xml:lang="en"><title type="html">Back to Singapore after 2 years</title><link href="/2022/03/29/Back-to-Singapore.html" rel="alternate" type="text/html" title="Back to Singapore after 2 years" /><published>2022-03-29T00:00:00+08:00</published><updated>2022-03-29T00:00:00+08:00</updated><id>/2022/03/29/Back-to-Singapore</id><content type="html" xml:base="/2022/03/29/Back-to-Singapore.html"></content><author><name></name></author><category term="life" /><summary type="html"></summary></entry><entry xml:lang="en"><title type="html">Upgrade ERPNext from v5 to v13</title><link href="/2021/08/24/ERPNext-Upgrade-from-5-to-13.html" rel="alternate" type="text/html" title="Upgrade ERPNext from v5 to v13" /><published>2021-08-24T00:00:00+08:00</published><updated>2021-08-24T00:00:00+08:00</updated><id>/2021/08/24/ERPNext-Upgrade-from-5-to-13</id><content type="html" xml:base="/2021/08/24/ERPNext-Upgrade-from-5-to-13.html">&lt;h2 id=&quot;why-&quot;&gt;Why ?&lt;/h2&gt;
 &lt;p&gt;My ERPNext venture has been halted for a long while. However, we do have an existing customer to support.&lt;br /&gt;
 They have been using the system for a long while without any issue. 
 However, no upgrade means no new features and this time they are really in need of that&lt;/p&gt;
@@ -45,38 +45,43 @@ So that when you restore it doesn’t fail because not enough space.&lt;/li&gt;
   &lt;/li&gt;
   &lt;li&gt;Migrate but skipp all failed migrations: &lt;code&gt;bench migrate —skip-failing&lt;/code&gt;
 From here on it depend on what errors will you encounter.&lt;/li&gt;
-  &lt;li&gt;Set Email Account uidnext = 0
-    &lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;SET SQL_SAFE_UPDATES = 0;
-update `tabEmail Account` set uidnext = &apos;0&apos; where trim(coalesce(uidnext, &apos;&apos;)) = &apos;&apos;;
-SET SQL_SAFE_UPDATES = 1;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Delete Custom Field sales_uom -&amp;gt; might want to copy data
-    &lt;ul&gt;
-      &lt;li&gt;select * from &lt;code&gt;tabCustom Field&lt;/code&gt; where name like ‘%sales_uom%’;&lt;/li&gt;
-      &lt;li&gt;delete from &lt;code&gt;tabCustom Field&lt;/code&gt; where name = ‘Item-sales_uom’;&lt;/li&gt;
-      &lt;li&gt;delete from &lt;code&gt;tabCustom Field&lt;/code&gt; where name = ‘Item-purchase_uom’;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Quotation Item: Copy Stock UOM to UOM for existing items
-    &lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;set sql_safe_updates = 0;
-update `tabQuotation Item` set uom = stock_uom;
-set sql_safe_updates = 1;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Solve patch issue&lt;/li&gt;
+  &lt;li&gt;Set Email Account uidnext = 0&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;strong&gt;Patch: erpnext.patches.v11_0.create_salary_structure_assignments&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;pymysql.err.OperationalError: (1054, &quot;Unknown column &apos;sse.from_date&apos; in &apos;field list&apos;&quot;)
-&lt;/code&gt;&lt;/pre&gt;
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sql_safe_updates&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabEmail Account`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uidnext&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;0&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;trim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coalesce&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uidnext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sql_safe_updates&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Delete Custom Field sales_uom -&amp;gt; might want to copy data&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;select&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabCustom Field`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;like&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;%sales_uom%&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;delete&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabCustom Field`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Item-sales_uom&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;delete&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabCustom Field`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Item-purchase_uom&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Quotation Item: Copy Stock UOM to UOM for existing items&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sql_safe_updates&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabQuotation Item`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uom&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stock_uom&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sql_safe_updates&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Solve patch issue
+&lt;strong&gt;Patch: erpnext.patches.v11_0.create_salary_structure_assignments&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span class=&quot;n&quot;&gt;pymysql&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;OperationalError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1054&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Unknown column &apos;sse.from_date&apos; in &apos;field list&apos;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
 &lt;p&gt;Fix:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;alter table `tabSalary Structure Employee` add column (from_date DATETIME DEFAULT current_timestamp(), to_date DATETIME DEFAULT current_timestamp());
-set sql_safe_updates = 0;
-update `tabSalary Structure Employee` set from_date = &apos;2021-01-01 00:00:00&apos;;
-update `tabSalary Structure Employee` set to_date = &apos;2021-12-31 00:00:00&apos;;
-set sql_safe_updates = 1;
-&lt;/code&gt;&lt;/pre&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;alter&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabSalary Structure Employee`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;column&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_date&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;current_timestamp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to_date&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;current_timestamp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sql_safe_updates&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabSalary Structure Employee`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;from_date&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2021-01-01 00:00:00&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabSalary Structure Employee`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to_date&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;2021-12-31 00:00:00&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sql_safe_updates&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Solve patch issue:&lt;/li&gt;
@@ -85,18 +90,20 @@ set sql_safe_updates = 1;
 &lt;p&gt;&lt;strong&gt;Patch: erpnext.patches.v12_0.move_item_tax_to_item_tax_template&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;Fix:&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;insert into `tabSingles` (doctype, field, value) values (&apos;Accounts Settings&apos;, &apos;allow_stale&apos;, 1);
-insert into `tabSingles` (doctype, field, value) values (&apos;Accounts Settings&apos;, &apos;stale_days&apos;, 2);
-&lt;/code&gt;&lt;/pre&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;insert&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;into&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabSingles`&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doctype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;field&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;values&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;Accounts Settings&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;allow_stale&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;insert&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;into&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabSingles`&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doctype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;field&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;values&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;Accounts Settings&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;stale_days&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Solve patch issue 
 &lt;strong&gt;Patch: erpnext.patches.v13_0.rename_issue_doctype_fields&lt;/strong&gt;
-Fix
-    &lt;pre&gt;&lt;code class=&quot;language-mariadb&quot;&gt;update `tabIssue` set resolution_by_variance = 1;
-update `tabIssue` set response_by_variance = 1;
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/li&gt;
+Fix:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabIssue`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;resolution_by_variance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;`tabIssue`&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;set&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response_by_variance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ol&gt;
   &lt;li&gt;After fixing all patch issues, run &lt;code&gt;bench migrate&lt;/code&gt; again without &lt;code&gt;--skip-failing&lt;/code&gt;&lt;/li&gt;
   &lt;li&gt;Install vuejs &lt;code&gt;npm install vue (first time)&lt;/code&gt;&lt;/li&gt;
   &lt;li&gt;Run bench update &lt;code&gt;bench update —reset&lt;/code&gt;&lt;/li&gt;
@@ -637,18 +644,4 @@ As of the 2 video above, here is what it will look like after we’ve added them
 &lt;p&gt;One thing I definitely loved about &lt;code&gt;cmus&lt;/code&gt; is that the navigation keys are &lt;code&gt;j&lt;/code&gt;, &lt;code&gt;k&lt;/code&gt; for up and down which is super familiar if you used &lt;code&gt;vim&lt;/code&gt;. So again, everything is seamless. 
 There are much more functionalities of cmus to explore and I am still in the learning process.&lt;/p&gt;
 
-&lt;p&gt;Hope you will find this useful if you are also late to the game :)&lt;/p&gt;</content><author><name></name></author><category term="life" /><category term="music" /><summary type="html">Pretty sure I am very late to the game but only recently I’ve found out how to download and listen to music right from the Terminal (or iTerm2, whichever your terminal is).</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Mar/post-music.jpg" /></entry><entry xml:lang="en"><title type="html">Happy New Year 2019!</title><link href="/2019/01/06/2018-Review.html" rel="alternate" type="text/html" title="Happy New Year 2019!" /><published>2019-01-06T00:00:00+08:00</published><updated>2019-01-06T00:00:00+08:00</updated><id>/2019/01/06/2018-Review</id><content type="html" xml:base="/2019/01/06/2018-Review.html">&lt;p&gt;I have stopped blogging for a while, more than a year and a half to be more accurate.
-Last year has been tough when I have had to juggled between a crazily time-consuming full time job and my own ERPNext venture.
-It’s a pity that in the end, I had to let the venture go, at least for now.
-Though there are quite a few things I’ve learned technically this year but at the same time, there wasn’t any time left to blog about those.&lt;/p&gt;
-
-&lt;p&gt;Something I’ve done over last year:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Temporarily halt operations of my own ERPNext company to focus on my full time first. Will restart the first chance I’ve got.&lt;/li&gt;
-  &lt;li&gt;Switch to use vim through out 2018 intead of PyCharm for python. It’s pretty great!!&lt;/li&gt;
-  &lt;li&gt;Fly back and forth between Singapore and Vietnam to set up the Vietnamese team&lt;/li&gt;
-  &lt;li&gt;Started with investment and learn more about value investing. The market in 2018 has a lot of ups and downs, it was a wild ride. But learnt quite a lot as well.&lt;/li&gt;
-  &lt;li&gt;Visited beautiful Hunan China and survive on the limited Chinese vocabulary I have. A long overdue break with a lot of fun. Also first time to see snow and it was awesome!&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Just drop here a few lines to remind myself of this year. Now let’s march to 2019 with full power!!!&lt;/p&gt;</content><author><name></name></author><category term="life" /><summary type="html">I have stopped blogging for a while, more than a year and a half to be more accurate. Last year has been tough when I have had to juggled between a crazily time-consuming full time job and my own ERPNext venture. It’s a pity that in the end, I had to let the venture go, at least for now. Though there are quite a few things I’ve learned technically this year but at the same time, there wasn’t any time left to blog about those.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/newyear.png" /></entry></feed>
+&lt;p&gt;Hope you will find this useful if you are also late to the game :)&lt;/p&gt;</content><author><name></name></author><category term="life" /><category term="music" /><summary type="html">Pretty sure I am very late to the game but only recently I’ve found out how to download and listen to music right from the Terminal (or iTerm2, whichever your terminal is).</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="/images/2019Mar/post-music.jpg" /></entry></feed>

@@ -158,38 +158,43 @@ So that when you restore it doesn’t fail because not enough space.</li>
   </li>
   <li>Migrate but skipp all failed migrations: <code>bench migrate —skip-failing</code>
 From here on it depend on what errors will you encounter.</li>
-  <li>Set Email Account uidnext = 0
-    <pre><code class="language-mariadb">SET SQL_SAFE_UPDATES = 0;
-update `tabEmail Account` set uidnext = '0' where trim(coalesce(uidnext, '')) = '';
-SET SQL_SAFE_UPDATES = 1;
-</code></pre>
-  </li>
-  <li>Delete Custom Field sales_uom -&gt; might want to copy data
-    <ul>
-      <li>select * from <code>tabCustom Field</code> where name like ‘%sales_uom%’;</li>
-      <li>delete from <code>tabCustom Field</code> where name = ‘Item-sales_uom’;</li>
-      <li>delete from <code>tabCustom Field</code> where name = ‘Item-purchase_uom’;</li>
-    </ul>
-  </li>
-  <li>Quotation Item: Copy Stock UOM to UOM for existing items
-    <pre><code class="language-mariadb">set sql_safe_updates = 0;
-update `tabQuotation Item` set uom = stock_uom;
-set sql_safe_updates = 1;
-</code></pre>
-  </li>
-  <li>Solve patch issue</li>
+  <li>Set Email Account uidnext = 0</li>
 </ol>
 
-<p><strong>Patch: erpnext.patches.v11_0.create_salary_structure_assignments</strong></p>
-<pre><code class="language-python">pymysql.err.OperationalError: (1054, "Unknown column 'sse.from_date' in 'field list'")
-</code></pre>
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">set</span> <span class="n">sql_safe_updates</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">update</span> <span class="nv">`tabEmail Account`</span> <span class="k">set</span> <span class="n">uidnext</span> <span class="o">=</span> <span class="s1">'0'</span> <span class="k">where</span> <span class="k">trim</span><span class="p">(</span><span class="n">coalesce</span><span class="p">(</span><span class="n">uidnext</span><span class="p">,</span> <span class="s1">''</span><span class="p">))</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+<span class="k">set</span> <span class="n">sql_safe_updates</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></code></pre></figure>
+
+<ol>
+  <li>Delete Custom Field sales_uom -&gt; might want to copy data</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="nv">`tabCustom Field`</span> <span class="k">where</span> <span class="n">name</span> <span class="k">like</span> <span class="s1">'%sales_uom%'</span><span class="p">;</span>
+<span class="k">delete</span> <span class="k">from</span> <span class="nv">`tabCustom Field`</span> <span class="k">where</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">'Item-sales_uom'</span><span class="p">;</span>
+<span class="k">delete</span> <span class="k">from</span> <span class="nv">`tabCustom Field`</span> <span class="k">where</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">'Item-purchase_uom'</span><span class="p">;</span></code></pre></figure>
+
+<ol>
+  <li>Quotation Item: Copy Stock UOM to UOM for existing items</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">set</span> <span class="n">sql_safe_updates</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">update</span> <span class="nv">`tabQuotation Item`</span> <span class="k">set</span> <span class="n">uom</span> <span class="o">=</span> <span class="n">stock_uom</span><span class="p">;</span>
+<span class="k">set</span> <span class="n">sql_safe_updates</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></code></pre></figure>
+
+<ol>
+  <li>Solve patch issue
+<strong>Patch: erpnext.patches.v11_0.create_salary_structure_assignments</strong></li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">pymysql</span><span class="p">.</span><span class="n">err</span><span class="p">.</span><span class="n">OperationalError</span><span class="p">:</span> <span class="p">(</span><span class="mi">1054</span><span class="p">,</span> <span class="s">"Unknown column 'sse.from_date' in 'field list'"</span><span class="p">)</span></code></pre></figure>
+
 <p>Fix:</p>
-<pre><code class="language-mariadb">alter table `tabSalary Structure Employee` add column (from_date DATETIME DEFAULT current_timestamp(), to_date DATETIME DEFAULT current_timestamp());
-set sql_safe_updates = 0;
-update `tabSalary Structure Employee` set from_date = '2021-01-01 00:00:00';
-update `tabSalary Structure Employee` set to_date = '2021-12-31 00:00:00';
-set sql_safe_updates = 1;
-</code></pre>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">alter</span> <span class="k">table</span> <span class="nv">`tabSalary Structure Employee`</span> <span class="k">add</span> <span class="k">column</span> <span class="p">(</span><span class="n">from_date</span> <span class="nb">DATETIME</span> <span class="k">DEFAULT</span> <span class="k">current_timestamp</span><span class="p">(),</span> <span class="n">to_date</span> <span class="nb">DATETIME</span> <span class="k">DEFAULT</span> <span class="k">current_timestamp</span><span class="p">());</span>
+<span class="k">set</span> <span class="n">sql_safe_updates</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">update</span> <span class="nv">`tabSalary Structure Employee`</span> <span class="k">set</span> <span class="n">from_date</span> <span class="o">=</span> <span class="s1">'2021-01-01 00:00:00'</span><span class="p">;</span>
+<span class="k">update</span> <span class="nv">`tabSalary Structure Employee`</span> <span class="k">set</span> <span class="n">to_date</span> <span class="o">=</span> <span class="s1">'2021-12-31 00:00:00'</span><span class="p">;</span>
+<span class="k">set</span> <span class="n">sql_safe_updates</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></code></pre></figure>
 
 <ol>
   <li>Solve patch issue:</li>
@@ -198,18 +203,20 @@ set sql_safe_updates = 1;
 <p><strong>Patch: erpnext.patches.v12_0.move_item_tax_to_item_tax_template</strong></p>
 
 <p>Fix:</p>
-<pre><code class="language-mariadb">insert into `tabSingles` (doctype, field, value) values ('Accounts Settings', 'allow_stale', 1);
-insert into `tabSingles` (doctype, field, value) values ('Accounts Settings', 'stale_days', 2);
-</code></pre>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">insert</span> <span class="k">into</span> <span class="nv">`tabSingles`</span> <span class="p">(</span><span class="n">doctype</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="s1">'Accounts Settings'</span><span class="p">,</span> <span class="s1">'allow_stale'</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="k">insert</span> <span class="k">into</span> <span class="nv">`tabSingles`</span> <span class="p">(</span><span class="n">doctype</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="s1">'Accounts Settings'</span><span class="p">,</span> <span class="s1">'stale_days'</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span></code></pre></figure>
 
 <ol>
   <li>Solve patch issue 
 <strong>Patch: erpnext.patches.v13_0.rename_issue_doctype_fields</strong>
-Fix
-    <pre><code class="language-mariadb">update `tabIssue` set resolution_by_variance = 1;
-update `tabIssue` set response_by_variance = 1;
-</code></pre>
-  </li>
+Fix:</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">update</span> <span class="nv">`tabIssue`</span> <span class="k">set</span> <span class="n">resolution_by_variance</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">update</span> <span class="nv">`tabIssue`</span> <span class="k">set</span> <span class="n">response_by_variance</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span></code></pre></figure>
+
+<ol>
   <li>After fixing all patch issues, run <code>bench migrate</code> again without <code>--skip-failing</code></li>
   <li>Install vuejs <code>npm install vue (first time)</code></li>
   <li>Run bench update <code>bench update —reset</code></li>
