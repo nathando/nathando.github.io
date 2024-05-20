@@ -67,7 +67,12 @@ html {
 
 body {
   background: #fff;
-  font: 16px/1.5 "Quicksand", sans-serif;
+  font-size: 16px;
+  font-family: "Noto Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  line-height: 1.5;
   color: #111;
   -webkit-font-smoothing: antialiased;
 }
@@ -377,8 +382,11 @@ nav a {
 .post img.img-auto {
   display: block;
   width: auto;
+  margin-top: 1.1rem;
+  margin-bottom: 1.1rem;
   margin-left: auto;
   margin-right: auto;
+  border-radius: 10px;
 }
 .post img.border-round {
   border-radius: 5px;
@@ -497,6 +505,13 @@ nav a {
 footer {
   padding: 20px 0;
   text-align: center;
+}
+
+#main {
+  padding: 1.5rem 2.5rem;
+  box-shadow: 0 0 5px #aaa;
+  margin-top: 1rem;
+  border-radius: 5px;
 }
 
 code {
